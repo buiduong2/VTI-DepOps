@@ -47,6 +47,25 @@ Lưu ý: HikariCP không đảm bảo mọi request đang thực hiện sẽ th�
 - TLS sử dụng mkcert và Kubernetes TLS Secret.
 - Chat Backend cũ dùng `LocalDateTime`; cấu hình JVM timezone `Asia/Ho_Chi_Minh` để tương thích.
 
+### Resource Requests & Limits
+
+**Measurement:** Sử dụng `docker stats` trên Docker Compose để đo khi Idle và sau khi thực hiện các thao tác chat.
+
+| Service | Idle Memory | Observed Memory |
+|---|---:|---:|
+| Auth | 425.2 MiB | 434.8 MiB |
+| Chat Backend | 368.7 MiB | 379.6 MiB |
+| Chat UI | 102.7 MiB | 103.5 MiB |
+| PostgreSQL | 59.21 MiB | 59.79 MiB |
+
+**Decision:**
+- Memory Request dựa trên mức RAM ổn định, có dự phòng.
+- Memory Limit cao hơn mức RAM quan sát được để tránh OOM.
+- CPU Request/Limit sử dụng giá trị thử nghiệm do chưa đo được CPU peak.
+- Cần xác nhận lại trên Kubernetes vì số liệu Docker Compose không hoàn toàn tương đương.
+
+**Status:** Initial sizing — chưa phải production benchmark.ker Compose chỉ là cơ sở ước lượng ban đầu, không đại diện hoàn toàn cho tải production.
+
 ## 3. Problems Encountered
 
 | Vấn đề | Nguyên nhân / Giải pháp |

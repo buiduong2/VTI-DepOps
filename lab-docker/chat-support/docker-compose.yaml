@@ -33,7 +33,7 @@ services:
 
     postgres: 
         image: postgres:17-alpine
-        restart: always
+        restart: no # Chỉ là lab ko cần khởi động liên tục
         env_file: 
           - ./config/db.env
         volumes:

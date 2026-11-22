@@ -67,8 +67,7 @@ Sau khi Envoy được tạo:
 ```bash
 ./script/start-proxy.sh
 
-cd proxy
-docker compose up -d
+docker compose -f proxy/docker-compose.yaml up -d --force-recreate
 ```
 
 ### 7. Configure Laptop

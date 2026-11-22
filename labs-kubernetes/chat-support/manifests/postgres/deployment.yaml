@@ -32,6 +32,15 @@ spec:
                       - name: postgres-init
                         mountPath: /docker-entrypoint-initdb.d
                         readOnly: true
+                  
+                  resources:
+                    requests:
+                      cpu: "50m"
+                      memory: "128Mi"
+                    limits:
+                      cpu: "500m"
+                      memory: "512Mi"
+                      
             volumes:
                 - name: postgres-storage
                   persistentVolumeClaim: 
