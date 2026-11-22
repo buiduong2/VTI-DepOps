@@ -1,0 +1,54 @@
+name: chat-app
+
+services: 
+    auth: 
+        image: duongbd1997/lacdau-auth:latest
+        env_file: 
+          - ./config/auth.env
+        ports: 
+          - "8081:8080"
+        depends_on:
+            postgres:
+                condition: service_healthy
+
+
+    chat-be: 
+        image: duongbd1997/lacdau-chat:latest
+        env_file: 
+          - ./config/chat.env
+        ports: 
+          - "8080:8080"
+        depends_on:
+            auth:
+                condition: service_started
+            postgres:
+                condition: service_healthy
+
+    chat-ui:
+        image: duongbd1997/lacdau-chat-ui:v2
+        env_file: 
+          - ./config/chat-ui.env
+        ports:
+          - "80:3000"
+
+    postgres: 
+        image: postgres:17-alpine
+        restart: always
+        env_file: 
+          - ./config/db.env
+        volumes:
+          - ./database/init:/docker-entrypoint-initdb.d:ro
+          - postgres_data:/var/lib/postgresql/data
+
+        healthcheck:
+          test:
+            - CMD-SHELL
+            - pg_isready -U postgres -d postgres
+          interval: 5s
+          timeout: 3s
+          retries: 10
+          start_period: 10s
+
+
+volumes:
+  postgres_data:            
