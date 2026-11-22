@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: chat-deployment
+  labels:
+    app: chat-deployment
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat
+  template:
+    metadata: 
+      labels: 
+        app: chat
+    spec:
+      containers: 
+        - name: chat-container
+          image: duongbd1997/lacdau-chat:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          envFrom: 
+            - secretRef:
+                name: chat-secret
+
+  

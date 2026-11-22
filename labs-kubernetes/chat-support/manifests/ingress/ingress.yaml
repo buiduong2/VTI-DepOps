@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata: 
+  name: chat-support-ingress
+
+spec: 
+  ingressClassName: cloud-provider-kind
+
+  tls:
+    - hosts:
+        - chat.local.test
+        - auth.local.test
+        - chat-api.local.test
+      secretName: chat-support-tls
+
+  rules:
+    - host: chat-api.local.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chat-service
+                port:
+                  number: 80
+
+    - host: auth.local.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 80
+
+    - host: chat.local.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chat-ui-service
+                port:
+                  number: 80
+

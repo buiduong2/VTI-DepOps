@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-ui-deployment
+  labels:
+    app: chat-ui-deployment
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat-ui
+  template:
+    metadata:
+      labels:
+        app: chat-ui
+    spec:
+      containers:
+        - name: chat-ui-container
+          image: duongbd1997/lacdau-chat-ui:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          envFrom: 
+            - secretRef:
+                name: chat-ui-secret

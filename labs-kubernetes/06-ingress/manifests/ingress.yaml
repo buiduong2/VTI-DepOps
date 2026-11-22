@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress # kind là ingress để có thể hỗ trợ việc tạo Ingress 
+
+metadata:
+  name: demo-ingress # tên của resource
+
+spec: # Trạng thái mong muốn 
+  ingressClassName: cloud-provider-kind  # Ingress này danh cho Ingress Controller nào xử lý 
+  rules:  # danh sách các quy tắc định tuyến
+    - host: app.local  # mỗi rule là một hostname  VD Request GET / HTTP/1.1  \n Host: app.local # khớp với host này
+      http:   # Khai báo quy tắc dành cho lưu lượng HTTP 
+        paths: # Định tuyến dựa trên URL PATHS
+          - path: /
+            pathType: Prefix # Quy tawcs casch Ingress so khớp. Các type khác: Exact - Path phải khớp chính xác | preFix: khớp theo tiền tố | ImplementationSpecific so khớp phụ thuộc voaf Ingress Controller 
+            backend:  # Xác định service nào nhận request khi rule khớp 
+              service: # Tên kubernets Services 
+                name: nginx 
+                port:
+                  number: 80 # Cổng được khai báo trên service 

@@ -1,0 +1,44 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - manifests/postgres/deployment.yaml
+  - manifests/postgres/pvc.yaml
+  - manifests/postgres/service.yaml
+  - manifests/auth/deployment.yaml
+  - manifests/auth/service.yaml
+  - manifests/chat/deployment.yaml
+  - manifests/chat/service.yaml
+  - manifests/chat-ui/deployment.yaml
+  - manifests/chat-ui/service.yaml
+  - manifests/ingress/ingress.yaml
+secretGenerator:
+  - name: postgres-secret
+    envs:
+      - config/db.env
+  - name: auth-secret
+    envs: 
+      - config/auth.env
+  - name: chat-secret
+    envs:
+      - config/chat.env
+  - name: chat-ui-secret
+    envs: 
+      - config/chat-ui.env
+
+  - name: chat-support-tls
+    type: kubernetes.io/tls
+    files:
+      - tls.crt=proxy/certs/chat-support.pem
+      - tls.key=proxy/certs/chat-support-key.pem
+    options:
+      disableNameSuffixHash: true
+configMapGenerator:
+  - name: postgres-init
+    files:
+      - database/init/01-create-database.sql
+      - database/init/02-oauth2-authorization.sql
+      - database/init/03-auth-entity-schema.sql
+      - database/init/04-chat-entity-schema.sql
+
+

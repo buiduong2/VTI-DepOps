@@ -1,0 +1,6 @@
+.env
+*.env
+!.env.example
+
+# Chứng chỉ / private key
+*.pem
