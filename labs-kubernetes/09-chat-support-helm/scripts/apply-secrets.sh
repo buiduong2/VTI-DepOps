@@ -2,16 +2,38 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-NAMESPACE="${1:-default}"
+source "$(dirname "$0")/common.sh"
+cd "$ROOT_DIR"
+
+log "Applying PostgreSQL ConfigMap"
+
+kubectl -n "$NAMESPACE" create configmap postgres-init-scripts \
+  --from-file=database/init/ \
+  --dry-run=client -o yaml |
+  kubectl -n "$NAMESPACE" apply -f -
+
+log "Applying PostgreSQL Secret"
+
+kubectl -n "$NAMESPACE" create secret generic postgres-secret \
+  --from-env-file=envs/db.env \
+  --dry-run=client -o yaml |
+  kubectl -n "$NAMESPACE" apply -f -
+
+log "Applying application Secrets"
 
 for app in auth chat chat-ui; do
-  echo "Applying Secret: ${app}-secret"
-
-  kubectl create secret generic "${app}-secret" \
-    --namespace "$NAMESPACE" \
+  kubectl -n "$NAMESPACE" create secret generic "${app}-secret" \
     --from-env-file="envs/${app}.env" \
     --dry-run=client -o yaml |
-    kubectl apply --namespace "$NAMESPACE" -f -
+    kubectl -n "$NAMESPACE" apply -f -
 done
 
-echo "All application Secrets applied."
+log "Applying TLS Secret"
+
+kubectl -n "$NAMESPACE" create secret tls chat-support-tls \
+  --cert=certs/chat-support.pem \
+  --key=certs/chat-support-key.pem \
+  --dry-run=client -o yaml |
+  kubectl -n "$NAMESPACE" apply -f -
+
+log "Secrets and ConfigMap applied"
