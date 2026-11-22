@@ -1,0 +1,5 @@
+appConfig:
+  APP_NAME: "nginx-demo"
+  APP_ENV: "production"
+  LOG_LEVEL: "debug"
+  FEATURE_ENABLED: "true"

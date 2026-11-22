@@ -1,0 +1,1 @@
+kind create cluster --name helm-cluster --config ./cluster/kind-config.yaml

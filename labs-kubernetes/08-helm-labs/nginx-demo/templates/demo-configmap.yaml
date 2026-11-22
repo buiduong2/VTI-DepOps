@@ -1,0 +1,10 @@
+{{- if .Values.demoConfig }}
+{{- if .Values.demoConfig.enabled}}
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+    name: {{ include "nginx-demo.fullname" . }}-demo-config
+data: 
+    message: {{ .Values.demoConfig.message | quote }}
+{{- end}}
+{{- end }}

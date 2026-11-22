@@ -4,3 +4,28 @@
 
 # Chứng chỉ / private key
 *.pem
+
+# Rendered Kubernetes manifests
+rendered.yaml
+*-rendered.yaml
+
+# Packaged Helm charts
+*.tgz
+
+# Helm downloaded dependencies (optional)
+**/charts/*.tgz
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+values-secret.yaml
+values-secrets.yaml
+values-*-secret.yaml
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo

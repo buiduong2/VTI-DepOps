@@ -1,0 +1,12 @@
+
+{{- if .Values.appConfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+    name: {{ include "nginx-demo.fullname" . }}-app-config
+data: 
+    {{- range $key, $value := .Values.appConfig }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+
+{{- end }}

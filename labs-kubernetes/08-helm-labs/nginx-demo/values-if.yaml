@@ -1,0 +1,4 @@
+# Cusomtom template
+demoConfig:
+  enabled: true
+  message: "Hello from Helm"
