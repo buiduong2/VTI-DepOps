@@ -1,0 +1,22 @@
+# fullnameOverride: postgres
+architecture: standalone
+
+auth:
+  enablePostgresUser: true
+  existingSecret: postgres-secret
+  username: app_user
+  database: app_db
+
+primary:
+  initdb: 
+    user: postgres
+    existingSecret: postgres-secret
+    existingSecretKey: postgres-password
+    scriptsConfigMap: postgres-init-scripts
+    
+  persistence:
+    enabled: true
+    storageClass: standard
+    accessModes:
+      - ReadWriteOnce
+    size: 2Gi

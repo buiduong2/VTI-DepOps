@@ -1,0 +1,68 @@
+fullnameOverride: chat-ui
+
+replicaCount: 1
+
+image:
+  repository: duongbd1997/lacdau-chat-ui
+  pullPolicy: IfNotPresent
+  tag: v3
+
+serviceAccount:
+  create: false
+  automount: false
+
+service:
+  type: ClusterIP
+  port: 80
+
+containerPort: 3000
+
+ingress:
+  enabled: true
+  className: cloud-provider-kind
+  annotations: {}
+  hosts:
+    - host: chat.local.test
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: 
+    - hosts:
+        - chat.local.test
+      secretName: chat-support-tls
+
+resources: 
+  requests:
+    cpu: "50m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
+
+startupProbe: 
+  httpGet:
+    path: /internal/health/live
+    port: http
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 12
+
+readinessProbe:
+  httpGet:
+    path: /internal/health/ready
+    port: http
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+livenessProbe:
+  httpGet:
+    path: /internal/health/live
+    port: http
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+envFrom: 
+  - secretRef:
+      name: chat-ui-secret

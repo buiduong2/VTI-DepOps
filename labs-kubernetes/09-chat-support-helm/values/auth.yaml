@@ -1,0 +1,68 @@
+fullnameOverride: auth
+
+replicaCount: 1
+
+image:
+  repository: duongbd1997/lacdau-auth
+  pullPolicy: IfNotPresent
+  tag: v2
+
+serviceAccount:
+  create: false
+  automount: false
+
+service:
+  type: ClusterIP
+  port: 80
+
+containerPort: 8080
+
+ingress:
+  enabled: true
+  className: cloud-provider-kind
+  annotations: {}
+  hosts:
+    - host: auth.local.test
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: 
+    - hosts:
+        - auth.local.test
+      secretName: chat-support-tls
+
+resources: 
+  requests:
+    cpu: "100m"
+    memory: "512Mi"
+  limits:
+    cpu: "1000m"
+    memory: "768Mi"
+
+startupProbe: 
+  httpGet:
+    path: /internal/health/live
+    port: http
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 24
+
+readinessProbe:
+  httpGet:
+    path: /internal/health/ready
+    port: http
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+livenessProbe:
+  httpGet:
+    path: /internal/health/live
+    port: http
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+envFrom: 
+  - secretRef:
+      name: auth-secret
