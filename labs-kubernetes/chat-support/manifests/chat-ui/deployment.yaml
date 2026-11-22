@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: chat-ui-container
-          image: duongbd1997/lacdau-chat-ui:v2
+          image: duongbd1997/lacdau-chat-ui:v3
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -32,3 +32,24 @@ spec:
             limits:
               cpu: "500m"
               memory: "256Mi"
+
+          startupProbe:
+            httpGet:
+              path: /internal/health/live
+              port: 3000
+            periodSeconds: 5
+            failureThreshold: 12
+
+          readinessProbe:
+            httpGet:
+              path: /internal/health/ready
+              port: 3000
+            periodSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /internal/health/live
+              port: 3000
+            periodSeconds: 10
+            failureThreshold: 3

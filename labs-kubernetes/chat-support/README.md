@@ -66,6 +66,19 @@ Lưu ý: HikariCP không đảm bảo mọi request đang thực hiện sẽ th�
 
 **Status:** Initial sizing — chưa phải production benchmark.ker Compose chỉ là cơ sở ước lượng ban đầu, không đại diện hoàn toàn cho tải production.
 
+### Health Checks & Kubernetes Probes
+
+**Decision:** Bổ sung hai endpoint `/internal/health/live` và `/internal/health/ready` cho Auth Server, Chat Backend và Chat UI.
+
+- Trả HTTP 200 khi ứng dụng hoạt động bình thường.
+- Cho phép mô phỏng HTTP 503 bằng toggle trong môi trường lab.
+- Sử dụng `startupProbe` để kiểm soát giai đoạn khởi động.
+- Sử dụng `readinessProbe` để quyết định Pod có được nhận traffic từ Service hay không.
+- Sử dụng `livenessProbe` để phát hiện container cần restart.
+
+**Reason:** HTTP health checks giúp kiểm tra ứng dụng ở mức HTTP thay vì chỉ kiểm tra cổng TCP. Toggle được sử dụng để thực hành hành vi của Kubernetes khi ứng dụng mất khả năng phục vụ.
+
+**Scope:** Các health checks hiện tại chỉ phục vụ lab, chưa kiểm tra database hoặc các dependency bên ngoài.
 ## 3. Problems Encountered
 
 | Vấn đề | Nguyên nhân / Giải pháp |
@@ -78,6 +91,7 @@ Lưu ý: HikariCP không đảm bảo mọi request đang thực hiện sẽ th�
 | Axios Network Error | Laptop chưa tin cậy mkcert CA |
 | OAuth2 trả 400 | Cấu hình redirect URI không khớp |
 | Typing indicator không hiển thị | Timestamp `LocalDateTime` lệch timezone 7 giờ |
+|PostgreSQL một replica sử dụng Recreate strategy |để tránh overlapping Pods truy cập cùng PVC trong quá trình cập nhật Deployment|
 
 ## 4. Quick Start
 

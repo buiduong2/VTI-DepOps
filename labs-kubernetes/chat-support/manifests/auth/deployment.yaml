@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: auth-container
-          image: duongbd1997/lacdau-auth:latest
+          image: duongbd1997/lacdau-auth:v2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -33,3 +33,26 @@ spec:
               cpu: "1000m"
               memory: "768Mi"
 
+          startupProbe:
+            httpGet:
+              path: /internal/health/live
+              port: 8080
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 24
+
+          readinessProbe:
+            httpGet:
+              path: /internal/health/ready
+              port: 8080
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /internal/health/live
+              port: 8080
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
